@@ -36,10 +36,17 @@ public class Message {
 	public String getType() {
 		return type;
 	}
-	protected void setType(String type){
+	public void setType(String type){
 		this.type=type;
 	}
 	
+	public DateTime getCreated() {
+		return created;
+	}
+	public void setCreated(DateTime created) {
+		this.created = created;
+	}
+
 	public static class Builder{
 		
 		private Message message;

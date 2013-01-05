@@ -8,31 +8,46 @@ import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 import com.google.common.collect.MapMaker;
-import com.joyucn.chat.Message;
-import com.joyucn.chat.MessageChannel;
 
 public class HttpServer {
 
-	static ConcurrentMap<String, MessageChannel> userMessageChannels;
+	static ConcurrentMap<String, User> users;
+	static ConcurrentMap<String, Group> groups;
 	
 	public HttpServer() {
-		userMessageChannels = new MapMaker().makeMap();
+		users = new MapMaker().makeMap();
+		groups = new MapMaker().makeMap();
 	}
 	
-	public static MessageChannel getUserMessageChannel(String userName){
-		MessageChannel channel = userMessageChannels.get(userName);
-		if (channel==null){
-			tryCreateChannel(userName);
+	public static User getUser(String userName){
+		User user = users.get(userName);
+		if (user==null){
+			tryCreateUser(userName);
 		}
-		channel = userMessageChannels.get(userName);
-		return channel;
+		user = users.get(userName);
+		return user;
+	}
+	public static Group getGroup(String name){
+		Group group= groups.get(name);
+		if (group==null){
+			tryCreateGroup(name);
+		}
+		group = groups.get(name);
+		return group;
 	}
 	
-	private static synchronized void tryCreateChannel(String userName){
-		MessageChannel doubleCheckChannel = userMessageChannels.get(userName);
-		if (doubleCheckChannel==null){
-			doubleCheckChannel = new MessageChannel();
-			userMessageChannels.put(userName, doubleCheckChannel);
+	private static synchronized void tryCreateUser(String userName){
+		User user = users.get(userName);
+		if (user==null){
+			user = new User(userName);
+			users.put(userName,user);
+		}
+	}
+	private static synchronized void tryCreateGroup(String name){
+		Group group = groups.get(name);
+		if (group==null){
+			group = new Group(name);
+			groups.put(name,group);
 		}
 	}
 	
